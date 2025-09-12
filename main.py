@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+import requests
 
 cacheFolder = "/Cache"
 dataFolder = "/Data"
@@ -8,7 +9,32 @@ load_dotenv()
 
 key = os.getenv("API_KEY")
 mail = os.getenv("SERVICE_EMAIL")
+sheetId= os.getenv("SHEET_ID")
 
-print(key)
-print(mail)
-print(float(10.2))
+# don't forget to update USB .env file when adding more variables
+
+succes = False
+week = 0
+
+def getData(week):
+    URL = f"https://sheets.googleapis.com/v4/spreadsheets/{sheetId}/values/Weekly%20Comp%20{week}!A1:Z?alt=json&key={key}"
+    response = requests.get(URL)
+    print(response.status_code)
+    print(response.json())
+    responseData = dict(response.json())
+    print(" ")
+    print(responseData)
+    print(type(responseData))
+
+while succes == False:
+    prevWeek = week
+    while week == prevWeek:
+        tempweek = input("What is the new weekly number? #")
+        try: 
+            week = int(tempweek)
+        except:
+            print("Not a valid week number! Try again")
+            continue
+    succes = True
+    getData(week)
+print("Succesfully executed program!")
