@@ -21,7 +21,7 @@ def getData(week):
     response = requests.get(URL)
     print(response.status_code)
     responseData = dict(response.json())
-    return responseData
+    return responseData['values']
 
 def sortData(dataDict):
     def listData(data):
@@ -29,8 +29,15 @@ def sortData(dataDict):
         for i in data:
             list.append(i)
         return list
-    
     dataList = listData(dataDict)
+    print(dataList, "\n", dataList[0])
+    events = []
+    for i in dataList[0]:
+        print(i)
+        if i != "Tijdstempel" and i != "Discord username" and i != "Have you filmed your solves and do you want to show off? Drop the YouTube link here!":
+            # if not in list, 
+            events.append(i.split(" ")[0])
+    print(events)
 
 
 while succes == False:
@@ -43,6 +50,6 @@ while succes == False:
             print("Not a valid week number! Try again")
             continue
     data = getData(week)
+    sortData(data)
     succes = True
-
 print("Succesfully executed program!")
