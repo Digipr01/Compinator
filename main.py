@@ -20,11 +20,18 @@ def getData(week):
     URL = f"https://sheets.googleapis.com/v4/spreadsheets/{sheetId}/values/Weekly%20Comp%20{week}!A1:Z?alt=json&key={key}"
     response = requests.get(URL)
     print(response.status_code)
-    print(response.json())
     responseData = dict(response.json())
-    print(" ")
-    print(responseData)
-    print(type(responseData))
+    return responseData
+
+def sortData(dataDict):
+    def listData(data):
+        list = []
+        for i in data:
+            list.append(i)
+        return list
+    
+    dataList = listData(dataDict)
+
 
 while succes == False:
     prevWeek = week
@@ -35,6 +42,7 @@ while succes == False:
         except:
             print("Not a valid week number! Try again")
             continue
+    data = getData(week)
     succes = True
-    getData(week)
+
 print("Succesfully executed program!")
