@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from collections import defaultdict
 import os
 import requests
 
@@ -16,7 +17,8 @@ sheetId= os.getenv("SHEET_ID")
 succes = False
 week = 0
 events = []
-peopleDict = {}
+peopleDict = defaultdict(dict)
+defaultLength = 0
 
 def getData(week):
     URL = f"https://sheets.googleapis.com/v4/spreadsheets/{sheetId}/values/Weekly%20Comp%20{week}!A1:Z?alt=json&key={key}"
@@ -37,24 +39,23 @@ def checkEvents(dataDict):
     for i in dataList[0]:
         if i != "Tijdstempel" and i != "Discord username" and i != "Have you filmed your solves and do you want to show off? Drop the YouTube link here!":
             events.append(i.split(" ")[0])
+            
     print("Events:", events)
-    return events, dataList
+    return events, dataList, len(events)
 
 def processData(events, data):
     def assignPersonalSolves(listitem, events):
         for i in range(len(listitem)):
             if i <= 1:
                 continue
-            print("check2", listitem[1], type(listitem[0]), len(listitem[i]), listitem[i], peopleDict.get(listitem[1]))
-            #try:
+            elif i >= defaultLength:
+                break
             if peopleDict.get(listitem[1]) != None:
-                peopleDict[str(listitem[1])][str(events[i])].append(listitem[i])
+                if peopleDict[str(listitem[1])].get(events[i-2]) == None:
+                    peopleDict[str(listitem[1])][events[i-2]] = []
+                peopleDict[str(listitem[1])][events[i-2]].append(listitem[i])
             else:
-                peopleDict[str(listitem[1])].update(events[i], list(listitem[i])) # keyerror
-            print(peopleDict)
-            #except:
-                #print("Error has occured")
-            print("Check", peopleDict, type(peopleDict))
+                peopleDict[str(listitem[1])][events[i-2]] = [listitem[i]]
     for i in data:
         if i == data[0]:
             continue
@@ -70,8 +71,9 @@ while succes == False:
             print("Not a valid week number! Try again")
             continue
     data = getData(week)
-    events, datalist = checkEvents(data)
+    events, datalist, defaultLength = checkEvents(data)
     succes = True
     processData(events, datalist)
+    print(peopleDict)
 
 print("Succesfully executed program!")
