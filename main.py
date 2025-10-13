@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from collections import defaultdict
 import os
 import requests
+from colorama import Fore, Style
 
 cacheFolder = "/Cache"
 dataFolder = "/Data"
@@ -20,10 +21,13 @@ events = []
 peopleDict = defaultdict(dict)
 defaultLength = 0
 
+#How to print in color: 
+#print(f"{Fore.RED}{2}{Style.RESET_ALL}")
+
 def getData(week):
     URL = f"https://sheets.googleapis.com/v4/spreadsheets/{sheetId}/values/Weekly%20Comp%20{week}!A1:Z?alt=json&key={key}"
     response = requests.get(URL)
-    print("Response code:", response.status_code)
+    print(f"{Fore.GREEN if int(response.status_code) == 200 else Fore.RED}Response code: {response.status_code}{Style.RESET_ALL}")
     responseData = dict(response.json())
     return responseData['values']
 
@@ -40,18 +44,19 @@ def checkEvents(dataDict):
         if i != "Tijdstempel" and i != "Discord username" and i != "Have you filmed your solves and do you want to show off? Drop the YouTube link here!":
             events.append(i.split(" ")[0])
             
-    print("Events:", events)
+    print(f"{Fore.BLUE}Events: {events}{Style.RESET_ALL}")
     return events, dataList, len(events)
 
 def processData(events, data):
     def assignPersonalSolves(listitem, events):
+        print(f"{Fore.RED}Length: {len(listitem)} list: {listitem}{Style.RESET_ALL}")
         for i in range(len(listitem)):
             if i <= 1:
                 continue
             elif i >= defaultLength:
                 break
                 #fmc vanishes
-            print(3, peopleDict.get(listitem[1]))
+            print(f"{Fore.YELLOW}{i}{Style.RESET_ALL}")
             if peopleDict.get(listitem[1]) != None:
                 if peopleDict[str(listitem[1])].get(events[i-2]) == None:
                     peopleDict[str(listitem[1])][events[i-2]] = []
@@ -61,10 +66,10 @@ def processData(events, data):
     
     def calculateAverages(person, events):
         def convertToFloat(timelist):
-            print(timelist)
+            print(f"{Fore.MAGENTA}{timelist}{Style.RESET_ALL}")
         
         eventsHad = []
-        print(person)
+        print(f"{Fore.BLUE}{person}{Style.RESET_ALL}")
         for event in events:
             if event in eventsHad:
                 continue
@@ -75,9 +80,7 @@ def processData(events, data):
         if i == data[0]:
             continue
         assignPersonalSolves(i, events)
-        print(i)
     for person in peopleDict:
-        print(3, peopleDict.get(person))
         calculateAverages(person, events)
         
 while succes == False:
@@ -90,12 +93,9 @@ while succes == False:
             print("Not a valid week number! Try again")
             continue
     data = getData(week)
-    print(1, data)
     events, datalist, defaultLength = checkEvents(data)
-    print(2, data, defaultLength)
     processData(events, datalist)
-    print(peopleDict)
     
     succes = True
 
-print("Succesfully executed program!")
+print(f"{Fore.GREEN}Succesfully executed program!{Style.RESET_ALL}")
