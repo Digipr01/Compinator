@@ -6,7 +6,7 @@ from colorama import Fore, Style
 load_dotenv()
 
 key = os.getenv("API_KEY")
-sheetId= os.getenv("SHEET_ID")
+sheetId = os.getenv("SHEET_ID")
 
 #How to print in color: 
 #print(f"{Fore.RED}{2}{Style.RESET_ALL}")
@@ -47,7 +47,7 @@ def processData(events, data):
         for i in range(len(listitem)):
             if i <= 1:
                 continue
-            elif i >= defaultLength+2:
+            elif i >= defaultLength + 2:
                 break
             if peopleDict.get(listitem[1]) != None:
                 if peopleDict[str(listitem[1])].get(events[i-2]) == None:
@@ -74,9 +74,7 @@ while succes == False:
             continue
         break
     data = getData(week)
-    # print(1, data)
     datalist, defaultLength = checkEvents(data)
-    # print(2, data, defaultLength)
     processData(events, datalist)
     print(peopleDict)
     succes = True
