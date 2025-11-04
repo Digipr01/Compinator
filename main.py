@@ -3,6 +3,9 @@ import os
 import requests
 from colorama import Fore, Style
 
+cacheFolder = "/Cache"
+dataFolder = "/Data"
+
 load_dotenv()
 
 key = os.getenv("API_KEY")
