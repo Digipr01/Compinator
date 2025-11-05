@@ -36,9 +36,8 @@ def checkEvents(dataDict):
     for i in dataList[0]:
         if i != "Tijdstempel" and i != "Discord username" and i != "Have you filmed your solves and do you want to show off? Drop the YouTube link here!":
             events.append(i.split(" ")[0].lower())
-            if i not in shortEvents:
-                shortEvents.append(i.split(" ")[0].lower())
-            
+    shortEvents = list(set(events))
+    
     print(f"{Fore.BLUE}Events: {shortEvents}{Style.RESET_ALL}")
     return dataList, len(events)
 
@@ -55,13 +54,11 @@ def processData(events, data):
                 peopleDict[str(listitem[1])][events[i-2]].append(listitem[i])
             else:
                 peopleDict[str(listitem[1])] = {str(events[i-2]): [listitem[i]],}
-        print(listitem[1], peopleDict.get(listitem[1]))
 
     for i in data:
         if i == data[0]:
             continue
         assignPersonalSolves(i, events)
-        print(i)
 
         
 while succes == False: 
