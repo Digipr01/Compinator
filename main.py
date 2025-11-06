@@ -31,13 +31,20 @@ def checkEvents(dataDict):
         for i in data:
             list.append(i)
         return list
+    
+    def checkShortEvents(target):
+        for i in shortEvents:
+            if i == target:
+                return True
+        return False
     dataList = listData(dataDict)
+    
 
     for i in dataList[0]:
         if i != "Tijdstempel" and i != "Discord username" and i != "Have you filmed your solves and do you want to show off? Drop the YouTube link here!":
             events.append(i.split(" ")[0].lower())
-    shortEvents = list(set(events))
-    
+            if not checkShortEvents(i.split(" ")[0].lower()):
+                shortEvents.append(i.split(" ")[0].lower())
     print(f"{Fore.BLUE}Events: {shortEvents}{Style.RESET_ALL}")
     return dataList, len(events)
 
