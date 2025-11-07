@@ -39,7 +39,7 @@ def checkEvents(dataDict):
         return False
     dataList = listData(dataDict)
     
-
+    #filter out our list
     for i in dataList[0]:
         if i != "Tijdstempel" and i != "Discord username" and i != "Have you filmed your solves and do you want to show off? Drop the YouTube link here!":
             events.append(i.split(" ")[0].lower())
@@ -48,26 +48,38 @@ def checkEvents(dataDict):
     print(f"{Fore.BLUE}Events: {shortEvents}{Style.RESET_ALL}")
     return dataList, len(events)
 
-def processData(events, data):
+def parseData(events, data):
     def assignPersonalSolves(listitem, events):
         for i in range(len(listitem)):
             if i <= 1:
                 continue
             elif i >= defaultLength + 2:
                 break
+
             if peopleDict.get(listitem[1]) != None:
-                if peopleDict[str(listitem[1])].get(events[i-2]) == None:
-                    peopleDict[str(listitem[1])][events[i-2]] = []
-                peopleDict[str(listitem[1])][events[i-2]].append(listitem[i])
+                print("Found", listitem[1])
             else:
-                peopleDict[str(listitem[1])] = {str(events[i-2]): [listitem[i]],}
+                peopleDict[listitem[1]] = {}
+
+            if peopleDict[listitem[1]].get("attempts") != None:
+                print("Found events")
+            else:
+                peopleDict[listitem[1]]["attempts"] = {}
+
+            if peopleDict[str(listitem[1])]["attempts"].get(events[i-2]) == None:
+                peopleDict[str(listitem[1])]["attempts"][events[i-2]] = []
+            peopleDict[str(listitem[1])]["attempts"][events[i-2]].append(listitem[i])
+
 
     for i in data:
         if i == data[0]:
             continue
         assignPersonalSolves(i, events)
 
-        
+def processData():
+    for i in peopleDict:
+        print(peopleDict.get(i))
+
 while succes == False: 
     while True:
         tempweek = input("What is the new weekly number? #")
@@ -79,8 +91,8 @@ while succes == False:
         break
     data = getData(week)
     datalist, defaultLength = checkEvents(data)
-    processData(events, datalist)
-    print(peopleDict)
+    parseData(events, datalist)
+    processData()
     succes = True
 
 print(f"{Fore.GREEN}Succesfully executed program!{Style.RESET_ALL}")
