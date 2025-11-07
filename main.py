@@ -83,6 +83,7 @@ def processData():
 while succes == False: 
     while True:
         tempweek = input("What is the new weekly number? #")
+        exit() if tempweek.lower() == "cancel" else os.system('cls')
         try: 
             week = int(tempweek)
         except:
